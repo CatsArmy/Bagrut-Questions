@@ -37,24 +37,64 @@
             }
             return node.GetNext().Goto();
         }
+        #region InsertValue
         public static Node<T> Insert<T>(this Node<T> node, T value)
         {
-            Node<T> GoTo = node.Goto();
-            GoTo.SetNext(new Node<T>(value));
+            Node<T> InsertAt = node.Goto();
+            InsertAt.SetNext(new Node<T>(value));
             return node;
         }
         public static Node<T> Insert<T>(this Node<T> node, Node<T> i, T value)
         {
-            Node<T> GoTo = node.Goto(i);
-            GoTo.SetNext(new Node<T>(value));
+            Node<T> InsertAt = node.Goto(i);
+            InsertAt.SetNext(new Node<T>(value));
             return node;
         }
         public static Node<T> Insert<T>(this Node<T> node, int i, T value)
         {
-            Node<T> GoTo = node.Goto(i);
-            GoTo.SetNext(new Node<T>(value));
+            Node<T> InsertAt = node.Goto(i);
+            InsertAt.SetNext(new Node<T>(value));
             return node;
         }
+        #endregion
+        #region InsertNode
+        //Merge Nodes
+        public static Node<T> Insert<T>(this Node<T> node, Node<T> value, Node<T> i)
+        {
+            Node<T> InsertAt = node.Goto(i);
+            value = new Node<T>(value);
+            if (!InsertAt.HasNext())
+            {
+                InsertAt.SetNext(value);
+                return node;
+            }
+            Node<T> next = InsertAt.GetNext();
+            InsertAt.SetNext(value);
+            value.Goto().SetNext(next);
+            return node;
+        }
+        public static Node<T> Insert<T>(this Node<T> node, Node<T> value, int i)
+        {
+            Node<T> InsertAt = node.Goto(i);
+            value = new Node<T>(value);
+            if (!InsertAt.HasNext())
+            {
+                InsertAt.SetNext(value);
+                return node;
+            }
+            Node<T> next = InsertAt.GetNext();
+            InsertAt.SetNext(value);
+            value.Goto().SetNext(next);
+            return node;
+        }
+        public static Node<T> Insert<T>(this Node<T> node, Node<T> value)
+        {
+            Node<T> InsertAt = node.Goto();
+            InsertAt.SetNext(new Node<T>(value));
+            return node;
+        }
+        #endregion
+
         public static Node<int> Max(this Node<int> node) => Max(node, node);
         public static Node<int> Max(this Node<int> node, Node<int> max)
         {
