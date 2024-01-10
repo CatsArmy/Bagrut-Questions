@@ -114,6 +114,58 @@
             Node<T> node = new Node<T>(Values[i]);
             return ToNode(Values, --i, node);
         }
+        public static bool Contains<T>(this Node<T> node, T value)
+        {
+            return Contains(node, new Node<T>(value));
+            if (node is null)
+            {
+                return false;
+            }
+            if (true)
+            //if (value == node)
+            {
+                return true;
+            }
+            return node.GetNext().Contains(value);
+        }
+        public static bool Contains<T>(this Node<T> node, Node<T> value) => Contains(node, value,
+            value, node);
+        private static bool Contains<T>(this Node<T> node, Node<T> value, Node<T> i, Node<T> j)
+        {
+            if (node is null)
+            {
+                return value is null;
+            }
+            if (j.GetValue().Equals(i.GetValue()))
+            {
+                return Contains(node, value, value, j.GetNext());
+            }
+            if (!i.HasNext())
+            {
+                return true;
+            }
+            if (!j.HasNext())
+            {
+                return false;
+            }
+            return Contains(node.GetNext(), value, i.GetNext(), j.GetNext());
+        }
+        public static bool IndividualyContains<T>(this Node<T> node, Node<T> value)
+        {
+            if (node is null)
+            {
+                return value is null;
+            }
+            for (Node<T> i = value; i.HasNext(); i = i.GetNext())
+            {
+                if (!node.Contains(value.GetValue()))
+                {
+                    return false;
+                }
+            }
+            return true;
+
+        }
         public static Node<char> ToNode(this string str)
         {
             return str.ToCharArray().ToNode();
@@ -126,6 +178,18 @@
             }
             node = new Node<T>(Values[i], node);
             return ToNode(Values, --i, node);
+        }
+        public static bool SubNode<T>(this Node<T> node, Node<T> contains)
+        {
+            return node.Contains(contains);
+            //if node.Contains(contains.Val)
+            //node = node.Goto(contains.Val)
+            //var j = node.Nex
+            //for (var i = contains.Nex; i.HasNex && j.HasNex; i = i.Nex, j = j.Nex)
+            //if (i.Val != j.Val)
+            //return node.Nex.SubNode(contains)
+            //
+            //return j.HasNex;
         }
     }
 }

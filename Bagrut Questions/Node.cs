@@ -1,5 +1,4 @@
-﻿
-namespace Node
+﻿namespace Node
 {
     public class Node<T>
     {

@@ -83,10 +83,9 @@ namespace Bagrut_Questions
             ex5arr[0] = list1;
             ex5arr[1] = list2;
             ex5arr[2] = list3;
-            //Node<int> list4 = new Node<int>(list1);
-            //list4.Goto().SetNext(new Node<int>(list2));
-            //list4.Goto().SetNext(new Node<int>(list3));
-            //ex5arr[3] = list4;
+            Node<int> list4 = new Node<int>(list1);
+            list4.Goto().SetNext(new Node<int>(list2));
+            list4.Goto().SetNext(new Node<int>(list3));
             Node<int>[] ex5arrRev = Ex5(ex5arr);
             for (int i = 0; i < ex5arr.Length; i++)
             {
@@ -114,6 +113,19 @@ namespace Bagrut_Questions
                 str += i.GetValue();
             }
             Console.WriteLine(str);
+
+            Console.WriteLine(
+                $"Node4{list4} {(list4.Contains(list1) ? $"Does({true})" : $"Doesn't({false})")} Contain Node1{list1}");
+            Console.WriteLine(
+                $"Node4{list4} {(list4.Contains(list2) ? $"Does({true})" : $"Doesn't({false})")} Contain Node2{list2}");
+            Console.WriteLine(
+                $"Node4{list4} {(list4.Contains(list3) ? $"Does({true})" : $"Doesn't({false})")} Contain Node3{list3}");
+            Console.WriteLine(
+                $"Node4{list4} {(list4.IndividualyContains(list1) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node1{list1}");
+            Console.WriteLine(
+                $"Node4{list4} {(list4.IndividualyContains(list2) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node2{list2}");
+            Console.WriteLine(
+                $"Node4{list4} {(list4.IndividualyContains(list3) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node3{list3}");
         }
 
 
