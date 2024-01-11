@@ -1,4 +1,6 @@
-﻿namespace Node
+﻿using System;
+
+namespace Node
 {
     public static class NodeUtils
     {
@@ -108,12 +110,6 @@
             }
             return node.GetNext().Max(max);
         }
-        public static Node<T> ToNode<T>(this T[] Values)
-        {
-            int i = Values.Length - 1;
-            Node<T> node = new Node<T>(Values[i]);
-            return ToNode(Values, --i, node);
-        }
         public static bool Contains<T>(this Node<T> node, T value)
         {
             return Contains(node, new Node<T>(value));
@@ -170,6 +166,12 @@
         {
             return str.ToCharArray().ToNode();
         }
+        public static Node<T> ToNode<T>(this T[] Values)
+        {
+            int i = Values.Length - 1;
+            Node<T> node = new Node<T>(Values[i]);
+            return ToNode(Values, --i, node);
+        }
         private static Node<T> ToNode<T>(this T[] Values, int i, Node<T> node)
         {
             if (i < 0)
@@ -182,6 +184,7 @@
         public static bool SubNode<T>(this Node<T> node, Node<T> contains)
         {
             return node.Contains(contains);
+            /*
             //if node.Contains(contains.Val)
             //node = node.Goto(contains.Val)
             //var j = node.Nex
@@ -190,6 +193,144 @@
             //return node.Nex.SubNode(contains)
             //
             //return j.HasNex;
+            */
+        }
+        public static Node<T> Remove<T>(this Node<T> node, int i)
+        {
+            return node.Remove(node.Goto(i));
+        }
+        /// <returns><see cref="Node{T}"/> with <typeparamref name="T"/> <paramref name="value"/> 
+        /// <see langword="if"/> removed successfuly 
+        /// <see langword="else if"/> Failed to remove <see cref="Node{T}"/> 
+        /// with <typeparamref name="T"/> <paramref name="value"/> Returns: <see langword="null"/></returns>
+        public static Node<T> Remove<T>(this Node<T> node, T value)
+        {
+            return Remove(node, new Node<T>(value));
+        }
+        /// <returns><paramref name="current"/> <see langword="if"/> removed successfuly 
+        /// <see langword="else if"/> Failed to remove <paramref name="current"/> Returns: <see langword="null"/></returns>
+        public static Node<T> Remove<T>(this Node<T> node, Node<T> current)
+        {
+            if (node != current)
+            {
+                node = node.GetPreviousNode(current);
+                if (node is null)
+                {
+                    return null;//no remove
+                }
+                node.SetNext(current.GetNext());//removed
+                current.SetNext(null);
+                return current;
+            }
+            if (!current.HasNext())
+            {
+                return null;//no removed
+            }
+            Node<T> next = current.GetNext();
+            node = new Node<T>(current.GetValue());
+            current.SetValue(next.GetValue());//removed
+            current.SetNext(next.GetNext());
+            return node;
+        }
+        /// <param name="FirstOrLast">
+        /// When <see langword="true"/> Removes the Start of the node,
+        /// When <see langword="false"/> Remove the Last of the node
+        /// </param>
+        /// <returns><paramref name="node"/> <see langword="if"/> removed successfuly 
+        /// <see langword="else if"/> Failed to remove <paramref name="node"/> Returns: <see langword="null"/></returns>
+        public static Node<T> Remove<T>(this Node<T> node, bool FirstOrLast)
+        {
+            return node.Remove(FirstOrLast ? node.Goto(0) : node.Goto());
+        }
+        ///<summary>Removes All <see cref="Node{T}"/> that <paramref name="match"/> the condition</summary>
+        /// <returns>how many instances of  <paramref name="node"/> where removed</returns>
+        internal static int RemoveAll<T>(this Node<T> node, Predicate<T> match)
+        {
+            if (match == null || node is null)
+            {
+                return 0;
+            }
+            node = node.PreviousOrDefualt(match);
+            if (node is null)
+            {
+                return 0;
+            }
+
+            if (!(node.Remove(node.GetNext()) is null))
+            {
+                return 1 + RemoveAll(node, match);
+            }
+            return RemoveAll(node, match);
+        }
+        public static Node<char> RemoveAllMatching(this Node<char> node, Node<char> compare)
+        {
+            for (Node<char> i = node; !(i is null); i = i.GetNext())
+            {
+                if (!compare.Contains(i.GetValue()))
+                {
+                    node.RemoveAll(p => p == i.GetValue());
+                }
+            }
+            return node;
+        }
+        public static Node<T> GetPreviousNode<T>(this Node<T> node, Node<T> current)
+        {
+            Node<T> first = node;
+            for (Node<T> next = first.GetNext(); !(first is null); first = next, next = first.GetNext())
+            {
+                if (next == current)
+                {
+                    return first;
+                }
+            }
+            return first;
+        }
+        public static Node<T> FirstOrDefualt<T>(this Node<T> node, T value)
+        {
+            return node.FirstOrDefualt(predicate: new Predicate<T>(p => new Node<T>(p) == node));
+        }
+        public static Node<T> FirstOrDefualt<T>(this Node<T> node, Predicate<T> predicate)
+        {
+            if (node is null)
+            {
+                return null;
+            }
+            if (predicate(node.GetValue()))
+            {
+                return node;
+            }
+            if (!node.HasNext())
+            {
+                return null;
+            }
+            return node.GetNext().FirstOrDefualt(predicate);
+        }
+        public static Node<T> PreviousOrDefualt<T>(this Node<T> node, Predicate<T> predicate)
+        {
+            if (node is null)
+            {
+                return null;
+            }
+            if (!node.HasNext())
+            {
+                return null;
+            }
+            Node<T> next = node.GetNext();
+            if (predicate(next.GetValue()))
+            {
+                return node;
+            }
+            return next.PreviousOrDefualt(predicate);
+        }
+        public static int Count<T>(this Node<T> node)
+        {
+            if (node is null)
+
+            {
+                return 0;
+            }
+            int count = node.GetNext().Count();
+            return ++count;
         }
     }
 }

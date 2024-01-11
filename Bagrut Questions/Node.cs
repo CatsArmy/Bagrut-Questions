@@ -24,23 +24,29 @@
         public bool HasNext() => !(this.Next is null);
         public override string ToString()
         {
-            string str = string.Empty;
-            Node<T> i;
-            for (i = this; i.HasNext(); i = i.GetNext())
+            if (this is null)
             {
-                str += $"{i.Value}, ";
+                return string.Empty;
             }
-            return $"[{str}{i.Value}]";
+            string str = $"{this.Value}";
+            int count = 1;
+            Node<T> i;
+            for (i = this.GetNext(); !(i is null); i = i.GetNext())
+            {
+                str += $", {i.Value}";
+                count++;
+            }
+            return $"[{str} Length: {count}]";
         }
         public string ToPlainString(bool AddWhitespaces = false)
         {
-            string str = string.Empty;
+            string plainString = string.Empty;
             Node<T> i;
             for (i = this; !(i is null); i = i.GetNext())
             {
-                str += $"{i.Value}{(AddWhitespaces ? " " : string.Empty)}";
+                plainString += $"{i.Value}{(AddWhitespaces ? " " : string.Empty)}";
             }
-            return str;
+            return plainString;
         }
         public Node(T value, Node<T> next = null)
         {

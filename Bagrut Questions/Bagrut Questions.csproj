@@ -47,6 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BagrutQuestions.cs" />
+    <Compile Include="MyNode.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="NodeUtils.cs" />
     <Compile Include="Program.cs" />
