@@ -1,6 +1,7 @@
 ﻿using System;
 using Node;
 using Queue;
+using Bagrut = Bagrut_Questions.BagrutQuestions;
 
 namespace Bagrut_Questions
 {
@@ -164,48 +165,106 @@ namespace Bagrut_Questions
             node.SetNext(next);
             Decode(nodes, nodes[index], next);
         }
+
+        public static Node<int> BagrutQuestion1(Node<int> node)
+        {
+            //Can assume node is not empty.
+            //foreach subnode of nodes that are in up order
+            //the new node will add the sum of all the nodes in the subnode
+            if (node is null)
+            {
+                return null;
+            }
+            //logic given does not match example...
+            //shame on whoever made that for wasting hundruds of hours of students in total. cringe af
+            Node<int> i = node.FirstOrDefualt(match =>
+            match.HasNext() && match.GetValue() >= match.GetNext().GetValue());
+            return new Node<int>(node.Sum(i), Bagrut.BagrutQuestion1(i?.GetNext()));
+        }
+        public static bool BagrutQuestion2<T>(Node<T> node)
+        {
+            if (node is null)
+            {
+                return false;
+            }
+            int length = node.Count();
+            if (length % 3 != 0)
+            {
+                return false;
+            }
+            Node<T> nextSubnode = node.Goto(length);
+            Console.WriteLine(nextSubnode);
+            return BagrutQuestion2(nextSubnode, node.SubNode(nextSubnode), length);
+        }
+        //IsTrianginal
+        private static bool BagrutQuestion2<T>(Node<T> node, Node<T> subnode, int length, int i = 2)
+        {
+
+            Node<T> nextSubnode = null;
+            if (i != 1)
+            {
+                nextSubnode = node.Goto(length / 3 * i);
+            }
+
+            if (nextSubnode is null)
+            {
+                Console.WriteLine(subnode);
+                return true;
+            }
+            if (!nextSubnode.AllEquals(node.SubNode(subnode)))
+            {
+                Console.WriteLine(nextSubnode);
+                return false;
+            }
+            Console.WriteLine(nextSubnode);
+            return BagrutQuestion2(nextSubnode, node.SubNode(nextSubnode), length, --i);
+        }
         public class Program
         {
-            public static void Play()
+            private static int[] list1 = { 1, 2, };
+            private static int[] list2 = { 1, 2, 3, 4, 6, 5 };
+            private static int[] list3 = { 1, 2, 3, 4 };
+            private static int[] array = { 6, 2, 3, 4 };
+            private static int[] array1 = { 1, 2, 3, 6 };
+            private static int[] array2 = { 4, 2, 3, 1 };
+            private static int[] array3 = { 6, 2, 3, 4 };
+            private static int[] array4 = { 1, 2, 3, 6 };
+            private static Node<int> node1;
+            private static Node<int> node2;
+            private static Node<int> node3;
+            private static void Ex1()
             {
                 Queue<int> q1 = new Queue<int>();
                 q1.Insert(5);
                 q1.Insert(25);
                 q1.Insert(51);
-                Console.WriteLine("Get Last Q:" + q1.GetLast());
-
-                int[] a1 = { 1, 2, };
-                int[] a2 = { 1, 2, 3, 4, 6, 5 };
-                int[] a3 = { 1, 2, 3, 4 };
-                Node<int> list1 = a1.ToNode();
-                Node<int> list2 = a2.ToNode();
-                Node<int> list3 = a3.ToNode();
-                //PrintList(list1);
-                //PrintList(list2);
-                //PrintList(list3);
-                Console.WriteLine();
+                Console.WriteLine($"Get Last Q:{q1.GetLast()}\n");
                 Queue<Node<int>> q = new Queue<Node<int>>();
-                q.Insert(list1);
-                q.Insert(list2);
-                q.Insert(list3);
+                q.Insert(node1);
+                q.Insert(node2);
+                q.Insert(node3);
 
                 Console.Write("Ex1:");
-                Console.WriteLine(MaxEx1(q));
-
-
+                Console.WriteLine(Bagrut.MaxEx1(q));
+            }
+            private static void Ex2()
+            {
                 Console.Write("Ex2:");
-                Queue<Node<string>> q2 = new Queue<Node<string>>();
                 string[] s1 = { "this", "ex" };
                 string[] s2 = { "is", "very", "hard" };
                 string[] s3 = { "dont", "you", "think?" };
+                Queue<Node<string>> q2 = new Queue<Node<string>>();
                 q2.Insert(null);
                 q2.Insert(null);
                 q2.Insert(s1.ToNode());
                 q2.Insert(s2.ToNode());
                 q2.Insert(s3.ToNode());
 
-                Node<string> ex2list = Ex2(q2);
+                Node<string> ex2list = Bagrut.Ex2(q2);
                 Console.WriteLine(ex2list.ToPlainString(true));
+            }
+            private static void Ex3()
+            {
                 Queue<int> q11 = new Queue<int>();
                 q11.Insert(5);
                 q11.Insert(25);
@@ -222,31 +281,29 @@ namespace Bagrut_Questions
                 listq = new Node<Queue<int>>(q12, listq);
                 listq = new Node<Queue<int>>(q13, listq);
 
-                Console.WriteLine($"Ex3 {Ex3(listq)}");
-                int[] a11 = { 6, 2, 3, 4 };
-                int[] a12 = { 1, 2, 3, 6 };
-                int[] a13 = { 4, 2, 3, 1 };
-                int[] a14 = { 6, 2, 3, 4 };
-                int[] a15 = { 1, 2, 3, 6 };
+                Console.WriteLine($"Ex3 {Bagrut.Ex3(listq)}");
+            }
+            private static void Ex4()
+            {
                 Console.WriteLine("Ex4");
-                Node<int[]> listArr = new Node<int[]>(a11);
-                listArr = new Node<int[]>(a12, listArr);
-                listArr = new Node<int[]>(a13, listArr);
-                listArr = new Node<int[]>(a14, listArr);
-                listArr = new Node<int[]>(a15, listArr);
-                Console.WriteLine($"Case: Good: {Ex4(listArr)}");
+                Node<int[]> listArr = new Node<int[]>(array);
+                listArr = new Node<int[]>(array1, listArr);
+                listArr = new Node<int[]>(array2, listArr);
+                listArr = new Node<int[]>(array3, listArr);
+                listArr = new Node<int[]>(array4, listArr);
+                Console.WriteLine($"Case: Good: {Bagrut.Ex4(listArr)}");
                 int[] a16 = { 10, 2, 3, 6 };
                 listArr = new Node<int[]>(a16, listArr);
-                Console.WriteLine($"Case: Bad: {Ex4(listArr)}");
+                Console.WriteLine($"Case: Bad: {Bagrut.Ex4(listArr)}");
+            }
+            private static void Ex5()
+            {
                 Console.WriteLine("Ex5:");
                 Node<int>[] ex5arr = new Node<int>[3];
-                ex5arr[0] = list1;
-                ex5arr[1] = list2;
-                ex5arr[2] = list3;
-                Node<int> list4 = new Node<int>(list1);
-                list4.Goto().SetNext(new Node<int>(list2));
-                list4.Goto().SetNext(new Node<int>(list3));
-                Node<int>[] ex5arrRev = Ex5(ex5arr);
+                ex5arr[0] = node1;
+                ex5arr[1] = node2;
+                ex5arr[2] = node3;
+                Node<int>[] ex5arrRev = Bagrut.Ex5(ex5arr);
                 for (int i = 0; i < ex5arr.Length; i++)
                 {
                     Console.WriteLine(ex5arr[i]);
@@ -257,7 +314,35 @@ namespace Bagrut_Questions
                     Console.WriteLine(ex5arrRev[i]);
 
                 }
-                Node<Node<int>> listOlist = null;
+            }
+            private static void Ex6()
+            {
+                int stringsLength = "IDONOTMAKEGRAMMERMISTAKES".Length;
+                string badstr = "i DO NOT MAKE GRAMMER MISTAKES";
+                string funnystr = "I DO NOT MAKE GRAMMER MISTAKES";
+                string grammaticlyCorrectstr = "I do not make grammer mistakes";
+                Node<char> badNode = badstr.ToCharArray().ToNode();
+                Node<char> funnyNode = funnystr.ToCharArray().ToNode();
+                Node<char> grammaticlyCorrectNode = grammaticlyCorrectstr.ToCharArray().ToNode();
+                Node<char>[] nodes = { badNode, funnyNode, grammaticlyCorrectNode };
+                Node<Node<char>> nodewhat = nodes.ToNode();
+                string bad = $"{badstr} is {Bagrut.CountCapitalsEx6(nodewhat)}/{stringsLength} only uppercase(not include whitespaces) and grammaticly inverse? how what why";
+                string funny = $"{funnystr} is {Bagrut.CountCapitalsEx6(nodewhat)}/{stringsLength} only uppercase(not include whitespaces) is just all caps what the hell man";
+                string grammaticlyCorrect = $"{grammaticlyCorrectNode} is {Bagrut.CountCapitalsEx6(nodewhat)}/{stringsLength} only uppercase(not include whitespaces) is grammaticly correct wow finally";
+                string punchline =
+                    $"jokes on you turns out this functions name({nameof(CountCapitalsEx6)}) is missleading" +
+                    $"and does not give you the count of how many capitals where found in each node but all combinded" +
+                    $"what a shame lol do better man not cool ruined the joke";
+                Console.WriteLine(bad);
+                Console.WriteLine(funny);
+                Console.WriteLine(grammaticlyCorrect);
+                Console.WriteLine(punchline);
+            }
+            private static void Ex5B()
+            {
+                Node<int> list4 = new Node<int>(node1);
+                list4.Goto().SetNext(new Node<int>(node2));
+                list4.Goto().SetNext(new Node<int>(node3));
                 Console.WriteLine("Ex5: Decode");
                 string[] strings = { "IS A2", "BSK", "BIG CAT#", "$", "THIS0", "@" };
                 Node<char>[] nodes = new Node<char>[5];
@@ -275,17 +360,42 @@ namespace Bagrut_Questions
                 Console.WriteLine(str);
 
                 Console.WriteLine(
-                    $"Node4{list4} {(list4.Contains(list1) ? $"Does({true})" : $"Doesn't({false})")} Contain Node1{list1}");
+                    $"Node4{list4} {(list4.Contains(node1) ? $"Does({true})" : $"Doesn't({false})")} Contain Node1{node1}");
                 Console.WriteLine(
-                    $"Node4{list4} {(list4.Contains(list2) ? $"Does({true})" : $"Doesn't({false})")} Contain Node2{list2}");
+                    $"Node4{list4} {(list4.Contains(node2) ? $"Does({true})" : $"Doesn't({false})")} Contain Node2{node2}");
                 Console.WriteLine(
-                    $"Node4{list4} {(list4.Contains(list3) ? $"Does({true})" : $"Doesn't({false})")} Contain Node3{list3}");
+                    $"Node4{list4} {(list4.Contains(node3) ? $"Does({true})" : $"Doesn't({false})")} Contain Node3{node3}");
                 Console.WriteLine(
-                    $"Node4{list4} {(list4.IndividualyContains(list1) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node1{list1}");
+                    $"Node4{list4} {(list4.IndividualyContains(node1) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node1{node1}");
                 Console.WriteLine(
-                    $"Node4{list4} {(list4.IndividualyContains(list2) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node2{list2}");
+                    $"Node4{list4} {(list4.IndividualyContains(node2) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node2{node2}");
                 Console.WriteLine(
-                    $"Node4{list4} {(list4.IndividualyContains(list3) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node3{list3}");
+                    $"Node4{list4} {(list4.IndividualyContains(node3) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node3{node3}");
+            }
+            private static void Ex1B()
+            {
+                int[] arr = { 7, 2, 4, 8, 20, 18, 19, 20, 20, 5, -3, 0, 9 };
+                int[] expectedAsArray = { 7, 34, 57, 20, 5, 6 };
+                Node<int> expected = expectedAsArray.ToNode();
+                Node<int> node = arr.ToNode();
+                string result = $"{node}\nResulted: {node = Bagrut.BagrutQuestion1(node)}\nExpected: {expected}";
+                Console.WriteLine(result);
+                Console.WriteLine(node.AllEquals(expected) ? "Success" : "Failed");
+            }
+            private static void Ex2B()
+            {
+                int[] arr = { 2, 5, 3, 7, 2, 5, 3, 7, 2, 5, 3, 7 };
+                Node<int> node = arr.ToNode();
+                Console.WriteLine($"node{node}");
+                Console.WriteLine($"node is{(BagrutQuestion2(node) ? $"triangilar [{true}]" : $"'nt triangilar [{false}]")}");
+            }
+            public static void Play()
+            {
+                node1 = list1.ToNode();
+                node2 = list2.ToNode();
+                node3 = list3.ToNode();
+                Ex2B();
+
             }
         }
     }

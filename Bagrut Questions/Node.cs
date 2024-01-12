@@ -58,5 +58,19 @@
             this.Value = node.Value;
             this.Next = node.Next is null ? null : new Node<T>(node.Next);
         }
+
+        public bool AllEquals(Node<T> other)
+        {
+            //expecting both nodes to have the same length
+            for (var i = this; !(i is null) && !(other is null); i = i.GetNext(), other = other.GetNext())
+            {
+                if (!(i.Value.Equals(other.Value)))
+                {
+                    return false;
+                }
+            }
+            return true;
+
+        }
     }
 }

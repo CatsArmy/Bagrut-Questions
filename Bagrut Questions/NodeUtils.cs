@@ -132,18 +132,19 @@ namespace Node
             {
                 return value is null;
             }
+            if (i is null)
+            {
+                return true;
+            }
+            if (j is null)
+            {
+                return false;
+            }
             if (j.GetValue().Equals(i.GetValue()))
             {
                 return Contains(node, value, value, j.GetNext());
             }
-            if (!i.HasNext())
-            {
-                return true;
-            }
-            if (!j.HasNext())
-            {
-                return false;
-            }
+
             return Contains(node.GetNext(), value, i.GetNext(), j.GetNext());
         }
         public static bool IndividualyContains<T>(this Node<T> node, Node<T> value)
@@ -162,6 +163,7 @@ namespace Node
             return true;
 
         }
+
         public static Node<char> ToNode(this string str)
         {
             return str.ToCharArray().ToNode();
@@ -181,9 +183,23 @@ namespace Node
             node = new Node<T>(Values[i], node);
             return ToNode(Values, --i, node);
         }
-        public static bool SubNode<T>(this Node<T> node, Node<T> contains)
+        public static Node<T> SubNode<T>(this Node<T> node, Node<T> contains)
         {
-            return node.Contains(contains);
+            if (node is null || !node.Contains(contains))
+            {
+                return null;
+            }
+            Node<T> i = node.Goto(contains);
+            Node<T> next = null;
+            if (i.HasNext())
+            {
+                next = new Node<T>(i.GetNext().GetValue(), i.GetNext().GetNext());
+            }
+            i.SetNext(null);
+            Node<T> value = new Node<T>(node.GetValue(), (new Node<T>(node)));
+            i.SetNext(next);
+            return value;
+
             /*
             //if node.Contains(contains.Val)
             //node = node.Goto(contains.Val)
@@ -305,6 +321,22 @@ namespace Node
             }
             return node.GetNext().FirstOrDefualt(predicate);
         }
+        public static Node<T> FirstOrDefualt<T>(this Node<T> node, Predicate<Node<T>> predicate)
+        {
+            if (node is null)
+            {
+                return null;
+            }
+            if (predicate(node))
+            {
+                return node;
+            }
+            if (!node.HasNext())
+            {
+                return null;
+            }
+            return node.GetNext().FirstOrDefualt(predicate);
+        }
         public static Node<T> PreviousOrDefualt<T>(this Node<T> node, Predicate<T> predicate)
         {
             if (node is null)
@@ -332,5 +364,52 @@ namespace Node
             int count = node.GetNext().Count();
             return ++count;
         }
+
+        #region Node<Int>
+        public static bool IsUp(this Node<int> node)
+        {
+            if (node is null)
+            {
+                return false;
+            }
+            return node._IsUp();
+        }
+        private static bool _IsUp(this Node<int> node)
+        {
+            if (!node.HasNext())
+            {
+                return true;
+            }
+
+            Node<int> next = node.GetNext();
+            if (node.GetValue() > next.GetValue())
+            {
+                return false;
+            }
+            return _IsUp(next);
+        }
+        public static int Sum(this Node<int> node)
+        {
+            if (node is null)
+            {
+                return 0;
+            }
+            return node.GetValue() + Sum(node.GetNext());
+        }
+
+        //i is the last index of which you will be summing
+        public static int Sum(this Node<int> node, Node<int> i)
+        {
+            if (node is null)
+            {
+                return 0;
+            }
+            if (node.Equals(i))
+            {
+                return node.GetValue() + Sum(null);
+            }
+            return node.GetValue() + Sum(node.GetNext(), i);
+        }
+        #endregion
     }
 }
