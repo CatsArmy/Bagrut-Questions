@@ -40,6 +40,28 @@ namespace Node
             return node.GetNext().Goto();
         }
         #region InsertValue
+        /// <summary>
+        /// function is O(n)
+        /// as it calls <see cref="FirstOrDefualt{T}(Node{T}, Predicate{T}, bool)"/> which is O(n)
+        /// and after that call nothing is ran that makes the time complexity longer.
+        /// </summary>
+        public static Node<T> SortedInsert<T>(this Node<T> node, T value, Predicate<T> match)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            Node<T> next = node.FirstOrDefualt(match, false);
+            if (next.Equals(node))
+            {
+                T OGvalue = node.GetValue();
+                next.SetValue(value);
+                next.SetNext(new Node<T>(OGvalue, node.GetNext()));
+                return next;
+            }
+            next.SetNext(new Node<T>(value, next.GetNext()));
+            return next;
+        }
         public static Node<T> Insert<T>(this Node<T> node, T value)
         {
             Node<T> InsertAt = node.Goto();
@@ -305,7 +327,7 @@ namespace Node
         {
             return node.FirstOrDefualt(predicate: new Predicate<T>(p => new Node<T>(p) == node));
         }
-        public static Node<T> FirstOrDefualt<T>(this Node<T> node, Predicate<T> predicate)
+        public static Node<T> FirstOrDefualt<T>(this Node<T> node, Predicate<T> predicate, bool lastEqualsNull = true)
         {
             if (node is null)
             {
@@ -317,7 +339,7 @@ namespace Node
             }
             if (!node.HasNext())
             {
-                return null;
+                return lastEqualsNull ? null : node;
             }
             return node.GetNext().FirstOrDefualt(predicate);
         }
@@ -337,7 +359,7 @@ namespace Node
             }
             return node.GetNext().FirstOrDefualt(predicate);
         }
-        public static Node<T> PreviousOrDefualt<T>(this Node<T> node, Predicate<T> predicate)
+        public static Node<T> PreviousOrDefualt<T>(this Node<T> node, Predicate<T> match)
         {
             if (node is null)
             {
@@ -348,11 +370,29 @@ namespace Node
                 return null;
             }
             Node<T> next = node.GetNext();
-            if (predicate(next.GetValue()))
+            if (match(next.GetValue()))
             {
                 return node;
             }
-            return next.PreviousOrDefualt(predicate);
+            return next.PreviousOrDefualt(match);
+        }
+        public static Node<T> PreviousOrDefualt<T>(this Node<T> node, Predicate<Node<T>> match)
+        {
+            if (node is null || !node.HasNext())
+            {
+                return null;
+            }
+
+            Node<T> next = node.GetNext();
+            if (!next.HasNext())
+            {
+                return null;
+            }
+            if (match(next))
+            {
+                return node;
+            }
+            return next.PreviousOrDefualt(match);
         }
         public static int Count<T>(this Node<T> node)
         {
@@ -366,6 +406,20 @@ namespace Node
         }
 
         #region Node<Int>
+
+        public static int BuildDigit(this Node<int> node, Node<int> i)
+        {
+            if (node is null)
+            {
+                return 0;
+            }
+            const int mult = 10;
+            if (node.Equals(i))
+            {
+                return node.GetValue();
+            }
+            return node.GetValue() + BuildDigit(node.GetNext(), i) * mult;
+        }
         public static bool IsUp(this Node<int> node)
         {
             if (node is null)
@@ -406,10 +460,31 @@ namespace Node
             }
             if (node.Equals(i))
             {
-                return node.GetValue() + Sum(null);
+                return 0 + node.GetValue();
             }
             return node.GetValue() + Sum(node.GetNext(), i);
         }
         #endregion
     }
+    public class Range
+    {
+        private int min;
+        private int max;
+        public Range(int min, int max)
+        {
+            if (max < min)
+            {
+                this.min = max;
+                this.max = min;
+                return;
+            }
+            this.min = min;
+            this.max = max;
+        }
+        public override string ToString()
+        {
+            return $"({min},{max})";
+        }
+    }
+
 }

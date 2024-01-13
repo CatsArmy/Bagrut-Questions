@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Node;
 using Queue;
 using Bagrut = Bagrut_Questions.BagrutQuestions;
@@ -7,7 +8,6 @@ namespace Bagrut_Questions
 {
     public class BagrutQuestions
     {
-        //Todo Refactor function names
         public static Node<int> MaxEx1(Queue<Node<int>> queue)
         {
             return MaxEx1(queue, new Queue<Node<int>>(), queue.Head());
@@ -219,6 +219,30 @@ namespace Bagrut_Questions
             Console.WriteLine(nextSubnode);
             return BagrutQuestion2(nextSubnode, node.SubNode(nextSubnode), length, --i);
         }
+        public static Node<Range> BagrutQuestion3(Node<int> node)
+        {
+            if (node is null)
+            {
+                return null;
+            }
+            Node<int> i = node.FirstOrDefualt(match =>
+                match.HasNext() && 1 + match.GetValue() != match.GetNext().GetValue());
+            if (i is null)
+            {
+                return new Node<Range>(new Range(node.GetValue(), node.Goto().GetValue()));
+            }
+            return new Node<Range>(new Range(node.GetValue(), i.GetValue()), Bagrut.BagrutQuestion3(i?.GetNext()));
+        }
+        public static Node<int> BagrutQuestion4(Node<int> node)
+        {
+            if (node is null)
+            {
+                return null;
+            }
+            Node<int> i = node.PreviousOrDefualt(match =>
+                match == -9);
+            return new Node<int>(node.BuildDigit(i), BagrutQuestion4(i?.GetNext()?.GetNext()));
+        }
         public class Program
         {
             private static int[] list1 = { 1, 2, };
@@ -229,11 +253,12 @@ namespace Bagrut_Questions
             private static int[] array2 = { 4, 2, 3, 1 };
             private static int[] array3 = { 6, 2, 3, 4 };
             private static int[] array4 = { 1, 2, 3, 6 };
-            private static Node<int> node1;
-            private static Node<int> node2;
-            private static Node<int> node3;
+            private static Node<int> node1 = null;
+            private static Node<int> node2 = null;
+            private static Node<int> node3 = null;
             private static void Ex1()
             {
+                Console.WriteLine($"{nameof(Ex1)}:");
                 Queue<int> q1 = new Queue<int>();
                 q1.Insert(5);
                 q1.Insert(25);
@@ -243,13 +268,11 @@ namespace Bagrut_Questions
                 q.Insert(node1);
                 q.Insert(node2);
                 q.Insert(node3);
-
-                Console.Write("Ex1:");
                 Console.WriteLine(Bagrut.MaxEx1(q));
             }
             private static void Ex2()
             {
-                Console.Write("Ex2:");
+                Console.WriteLine($"{nameof(Ex2)}:");
                 string[] s1 = { "this", "ex" };
                 string[] s2 = { "is", "very", "hard" };
                 string[] s3 = { "dont", "you", "think?" };
@@ -265,6 +288,7 @@ namespace Bagrut_Questions
             }
             private static void Ex3()
             {
+                Console.WriteLine($"{nameof(Ex3)}:");
                 Queue<int> q11 = new Queue<int>();
                 q11.Insert(5);
                 q11.Insert(25);
@@ -281,11 +305,11 @@ namespace Bagrut_Questions
                 listq = new Node<Queue<int>>(q12, listq);
                 listq = new Node<Queue<int>>(q13, listq);
 
-                Console.WriteLine($"Ex3 {Bagrut.Ex3(listq)}");
+                Console.WriteLine($"{Bagrut.Ex3(listq)}");
             }
             private static void Ex4()
             {
-                Console.WriteLine("Ex4");
+                Console.WriteLine($"{nameof(Ex4)}:");
                 Node<int[]> listArr = new Node<int[]>(array);
                 listArr = new Node<int[]>(array1, listArr);
                 listArr = new Node<int[]>(array2, listArr);
@@ -298,7 +322,7 @@ namespace Bagrut_Questions
             }
             private static void Ex5()
             {
-                Console.WriteLine("Ex5:");
+                Console.WriteLine($"{nameof(Ex5)}:");
                 Node<int>[] ex5arr = new Node<int>[3];
                 ex5arr[0] = node1;
                 ex5arr[1] = node2;
@@ -317,6 +341,7 @@ namespace Bagrut_Questions
             }
             private static void Ex6()
             {
+                Console.WriteLine($"{nameof(Ex6)}:");
                 int stringsLength = "IDONOTMAKEGRAMMERMISTAKES".Length;
                 string badstr = "i DO NOT MAKE GRAMMER MISTAKES";
                 string funnystr = "I DO NOT MAKE GRAMMER MISTAKES";
@@ -340,10 +365,11 @@ namespace Bagrut_Questions
             }
             private static void Ex5B()
             {
+
                 Node<int> list4 = new Node<int>(node1);
                 list4.Goto().SetNext(new Node<int>(node2));
                 list4.Goto().SetNext(new Node<int>(node3));
-                Console.WriteLine("Ex5: Decode");
+                Console.WriteLine($"{nameof(Ex5B)} Decode:");
                 string[] strings = { "IS A2", "BSK", "BIG CAT#", "$", "THIS0", "@" };
                 Node<char>[] nodes = new Node<char>[5];
                 for (int i = 0; i < nodes.Length; i++)
@@ -372,8 +398,11 @@ namespace Bagrut_Questions
                 Console.WriteLine(
                     $"Node4{list4} {(list4.IndividualyContains(node3) ? $"Does({true})" : $"Doesn't({false})")} Individualy Contain Node3{node3}");
             }
+
+            //from bagrut powerpoint
             private static void Ex1B()
             {
+                Console.WriteLine($"{nameof(Ex1B)}:");
                 int[] arr = { 7, 2, 4, 8, 20, 18, 19, 20, 20, 5, -3, 0, 9 };
                 int[] expectedAsArray = { 7, 34, 57, 20, 5, 6 };
                 Node<int> expected = expectedAsArray.ToNode();
@@ -384,19 +413,279 @@ namespace Bagrut_Questions
             }
             private static void Ex2B()
             {
+                Console.WriteLine($"{nameof(Ex2B)}:");
                 int[] arr = { 2, 5, 3, 7, 2, 5, 3, 7, 2, 5, 3, 7 };
                 Node<int> node = arr.ToNode();
                 Console.WriteLine($"node{node}");
                 Console.WriteLine($"node is{(BagrutQuestion2(node) ? $"triangilar [{true}]" : $"'nt triangilar [{false}]")}");
             }
-            public static void Play()
+            private static void Ex3B()
             {
-                node1 = list1.ToNode();
-                node2 = list2.ToNode();
-                node3 = list3.ToNode();
-                Ex2B();
+                Console.WriteLine($"{nameof(Ex3B)}:");
+                int[] arr = { 3, 4, 5, 12, 19, 20, 100, 101, 102, 103, 104 };
+                Node<int> node = arr.ToNode();
+                Node<Range> NodeRange = new Node<Range>(new Range(3, 5),
+                    new Node<Range>(new Range(12, 12)));
 
+                Node<Range> Expected = NodeRange.GetNext();
+                Expected.SetNext(new Node<Range>(new Range(19, 20),
+                    new Node<Range>(new Range(100, 104))));
+                Expected = new Node<Range>(NodeRange);
+
+                NodeRange = Bagrut.BagrutQuestion3(node);
+
+                Console.WriteLine($"{nameof(NodeRange)}{NodeRange}");
+                Console.WriteLine($"{nameof(Expected)}{Expected}");
             }
+            private static void Ex4B()
+            {
+                Console.WriteLine($"{nameof(Ex4B)}:");
+                int[] expectedArr = { 92, 4, 543 };
+                //int[] arr = { 9, 2, -9, 4, -9, 5, 4, 3, -9 };
+                int[] arr = { 2, 9, -9, 4, -9, 3, 4, 5, -9 };
+                Node<int> node = arr.ToNode();
+                Node<int> Expected = expectedArr.ToNode();
+                Node<int> Resulted = BagrutQuestion4(node);
+                Console.WriteLine($"{nameof(Expected)}{Expected}");
+                Console.WriteLine($"{nameof(Resulted)}{Resulted}");
+            }
+            private static void Ex6B()
+            {
+                Console.WriteLine($"{nameof(Ex6B)}:");
+                Console.WriteLine("Not Implimented yet...");
+            }
+            /// <summary>
+            /// <paramref name="i"/> = 0 will play all tests <see langword="else"/> will run the test in
+            /// the index of <paramref name="i"/>
+            /// </summary>
+            ///<remarks>
+            ///when <paramref name="i"/> is bigger than 6 it will loop back to the second 
+            ///set of tests but for the second set of questions we got aka 
+            ///Ex<paramref name="i"/> or Ex<paramref name="i"/>B
+            ///</remarks>
+            public static void Play(int i = 0)
+            {
+                if (node1 is null)
+                {
+                    node1 = list1.ToNode();
+                }
+                if (node2 is null)
+                {
+                    node2 = list2.ToNode();
+                }
+                if (node3 is null)
+                {
+                    node3 = list3.ToNode();
+                }
+#if DEBUG
+                TimeSpan timeout = new TimeSpan(0, 0, 0, 1, 500);
+#else
+                TimeSpan timeout = new TimeSpan(0, 0, 10);
+#endif
+                switch (i)
+                {
+                    case 1:
+                        goto Case1;
+
+                    case 2:
+                        goto Case2;
+
+                    case 3:
+                        goto Case3;
+                    case 4:
+                        goto Case4;
+                    case 5:
+                        goto Case5;
+                    case 6:
+                        goto Case6;
+                    case 7:
+                        goto Case1B;
+                    case 8:
+                        goto Case2B;
+                    case 9:
+                        goto Case3B;
+                    case 10:
+                        goto Case4B;
+                    case 11:
+                        goto Case5B;
+                    case 12:
+                        goto Case6B;
+                    default:
+                        for (i = 1; i <= 12; i++, Thread.Sleep(timeout))
+                        {
+                            Play(i);
+                        }
+                        Console.Clear();
+                        break;
+                }
+            #region CaseLabels
+            Case1:
+                if (i == 1)
+                {
+                    Console.Clear();
+                    Ex1();
+                    Thread.Sleep(timeout);
+                }
+            Case2:
+                if (i == 2)
+                {
+                    Console.Clear();
+                    Ex2();
+                    Thread.Sleep(timeout);
+                }
+            Case3:
+                if (i == 3)
+                {
+                    Console.Clear();
+                    Ex3();
+                    Thread.Sleep(timeout);
+                }
+            Case4:
+                if (i == 4)
+                {
+                    Console.Clear();
+                    Ex4();
+                    Thread.Sleep(timeout);
+                }
+            Case5:
+                if (i == 5)
+                {
+                    Console.Clear();
+                    Ex5();
+                    Thread.Sleep(timeout);
+                }
+            Case6:
+                if (i == 6)
+                {
+                    Console.Clear();
+                    Ex6();
+                    Thread.Sleep(timeout);
+                }
+            Case1B:
+                if (i == 7)
+                {
+                    Console.Clear();
+                    Ex1B();
+                    Thread.Sleep(timeout);
+                }
+            Case2B:
+                if (i == 8)
+                {
+                    Console.Clear();
+                    Ex2B();
+                    Thread.Sleep(timeout);
+                }
+            Case3B:
+                if (i == 9)
+                {
+                    Console.Clear();
+                    Ex3B();
+                    Thread.Sleep(timeout);
+                }
+            Case4B:
+                if (i == 10)
+                {
+                    Console.Clear();
+                    Ex4B();
+                    Thread.Sleep(timeout);
+                }
+            Case5B:
+                if (i == 11)
+                {
+                    Console.Clear();
+                    Ex5B();
+                    Thread.Sleep(timeout);
+                }
+            Case6B:
+                if (i == 12)
+                {
+                    Console.Clear();
+                    Ex6B();
+                    Thread.Sleep(timeout);
+                }
+                #endregion
+            }
+        }
+    }
+    public class Competitor
+    {
+        private int minutes = 0;
+        private int seconds = 0;
+        private string name = string.Empty;
+        public Competitor(TimeSpan time, string name)
+        {
+            this.minutes = time.Minutes;
+            this.seconds = time.Seconds;
+            this.name = name.ToString();
+        }
+        public Competitor(Competitor competitor)
+        {
+            this.minutes = competitor.minutes;
+            this.seconds = competitor.seconds;
+            this.name = competitor.name.ToString();
+        }
+
+        public void SetMinutes(TimeSpan time) => this.minutes = time.Minutes;
+        public void SetSeconds(TimeSpan time) => this.seconds = time.Seconds;
+        public void SetName(string name) => this.name = name.ToString();
+        public TimeSpan GetTime() => new TimeSpan(0, this.minutes, this.seconds);
+        public int GetMinutes() => this.minutes;
+        public int GetSeconds() => this.seconds;
+        public string GetName() => this.name.ToString();
+    }
+    public class Race
+    {
+        private Node<Competitor> node = null;
+        public Race(Node<Competitor> node)
+        {
+            if (!node.HasNext())
+            {
+                return;
+            }
+            Competitor runner = node.GetValue();
+            this.node = new Node<Competitor>(runner);
+            node = node.GetNext();
+            for (runner = node.GetValue(); node.HasNext(); node = node.GetNext(),
+                runner = node.GetValue())
+            {
+                if (runner is null)
+                {
+                    continue;
+                }
+                this.Add(runner);
+            }
+        }
+        public Race(Competitor runner)
+        {
+            if (runner is null)
+            {
+                return;
+            }
+            this.node = new Node<Competitor>(new Competitor(runner));
+        }
+        public void Add(Competitor runner)
+        {
+            if (runner is null)
+            {
+                return;
+            }
+            if (this.node is null)
+            {
+                this.node = new Node<Competitor>(new Competitor(runner));
+                return;
+            }
+            // rank => first = fastest | last = slowest, O(n)
+            this.node.SortedInsert(new Competitor(runner),
+                match => match.GetTime() > runner.GetTime());
+        }
+        /// <param name="i"><paramref name="i"/> = --<paramref name="i"/></param>
+        public string Rank(int i)
+        {
+            if (this.node is null)
+            {
+                return string.Empty;
+            }
+            return this.node.Goto(--i).GetValue().GetName();
         }
     }
 }
