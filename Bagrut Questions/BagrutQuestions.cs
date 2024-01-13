@@ -243,6 +243,14 @@ namespace Bagrut_Questions
                 match == -9);
             return new Node<int>(node.BuildDigit(i), BagrutQuestion4(i?.GetNext()?.GetNext()));
         }
+        public static bool BagrutQuestion5(Node<char> node, char value, char nextValue)
+        {
+            if (node is null)
+            {
+                return false;
+            }
+            return !(node.FirstOrDefualt(match => match.GetValue() == value && match.GetNext().GetValue() == nextValue) is null);
+        }
         public class Program
         {
             private static int[] list1 = { 1, 2, };
@@ -605,6 +613,7 @@ namespace Bagrut_Questions
                 }
                 #endregion
             }
+
         }
     }
     public class Competitor
