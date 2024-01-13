@@ -243,13 +243,15 @@ namespace Bagrut_Questions
                 match == -9);
             return new Node<int>(node.BuildDigit(i), BagrutQuestion4(i?.GetNext()?.GetNext()));
         }
-        public static bool BagrutQuestion5(Node<char> node, char value, char nextValue)
+        public static bool BagrutQuestion5(Node<char> node, char value = 'a', char nextValue = 'b')
         {
             if (node is null)
             {
                 return false;
             }
-            return !(node.FirstOrDefualt(match => match.GetValue() == value && match.GetNext().GetValue() == nextValue) is null);
+            Node<char> ba = node.FirstOrDefualt(match => match.GetValue() == nextValue && match.GetNext().GetValue() == value);
+            Node<char> ab = node.FirstOrDefualt(match => match.GetValue() == value && match.GetNext().GetValue() == nextValue);
+            return !(ab is null) || !(ba is null);
         }
         public class Program
         {
