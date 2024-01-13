@@ -243,15 +243,48 @@ namespace Bagrut_Questions
                 match == -9);
             return new Node<int>(node.BuildDigit(i), BagrutQuestion4(i?.GetNext()?.GetNext()));
         }
+        public static Node<char> Sod1(Node<char> lst, char ch)
+        {
+            if (lst == null)
+            {
+                return null;
+            }
+            if (lst.GetValue() == ch)
+            {
+                return lst;
+            }
+            return Sod1(lst.GetNext(), ch);
+        }
         public static bool BagrutQuestion5(Node<char> node, char value = 'a', char nextValue = 'b')
         {
             if (node is null)
             {
                 return false;
             }
-            Node<char> ba = node.FirstOrDefualt(match => match.GetValue() == nextValue && match.GetNext().GetValue() == value);
-            Node<char> ab = node.FirstOrDefualt(match => match.GetValue() == value && match.GetNext().GetValue() == nextValue);
-            return !(ab is null) || !(ba is null);
+            Node<char> a = Sod1(node, value);
+            Node<char> b = Sod1(node, nextValue);
+            if (a is null && b is null)
+            {
+                return false;
+            }
+            if (a is null && b.HasNext())
+            {
+                return b.GetNext().GetValue() == value;
+            }
+            if (b is null && a.HasNext())
+            {
+                return a.GetNext().GetValue() == nextValue;
+
+            }
+            return false;
+            //omg that is so disgusting to read and look at the code i had to comment out was so much cleaner and 
+            //nicer wow i hate this code style.
+            //wow such nicer code i had written before they said to use Sod1 the non generic trash func
+            //fight me if you disagree as you just dont know c# that well its called delegation you just delegate
+            //not that hard. lets you reuse your code alot more
+            //node.FirstOrDefualt(match => match.GetValue() == nextValue && match.GetNext().GetValue() == value);
+            //node.FirstOrDefualt(match => match.GetValue() == value && match.GetNext().GetValue() == nextValue);
+
         }
         public class Program
         {
